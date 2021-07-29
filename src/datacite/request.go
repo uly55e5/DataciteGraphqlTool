@@ -1,13 +1,13 @@
 package datacite
 
 type DataciteRequest struct {
-	Query     string            `json:"query"`
-	Variables map[string]string `json:"variables"`
+	Query     string                 `json:"query"`
+	Variables map[string]interface{} `json:"variables"`
 }
 
 var FullDataRequest = DataciteRequest{
-	Query: `query AllDatasets($cursorId: String){
-  datasets(query: "chemistry",first:20, after: $cursorId) {
+	Query: `query AllDatasets($cursorId: String, $first: Int, $query: String){
+  datasets(query: $query,first: $first, after: $cursorId) {
     totalCount
     nodes {
       doi
@@ -30,5 +30,5 @@ var FullDataRequest = DataciteRequest{
     }
   }
 }`,
-	Variables: map[string]string{"cursorId": ""},
+	Variables: map[string]interface{}{"cursorId": "", "first": 20, "query": "chemistry"},
 }

@@ -47,7 +47,7 @@ func main() {
 		}
 		avgTime := time.Since(firstStart).Milliseconds() / int64(len(result.Data.Datasets.Nodes)-startLen)
 		eta := avgTime * int64(response.Data.Datasets.TotalCount-len(result.Data.Datasets.Nodes))
-		fmt.Println(startCursor, len(result.Data.Datasets.Nodes), result.Data.Datasets.TotalCount, time.Since(start), time.Duration(avgTime)*time.Millisecond, time.Duration(eta)*time.Millisecond)
+		fmt.Println(startCursor, len(result.Data.Datasets.Nodes), response.Data.Datasets.TotalCount, time.Since(start), time.Duration(avgTime)*time.Millisecond, time.Duration(eta)*time.Millisecond)
 	}
 }
 
