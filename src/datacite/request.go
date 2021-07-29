@@ -2,13 +2,12 @@ package datacite
 
 const firstDefault = 100
 
-type DataciteRequest struct {
+type Request struct {
 	Query     string                 `json:"query"`
 	Variables map[string]interface{} `json:"variables"`
 }
 
-var FullDataRequest = DataciteRequest{
-	Query: `query AllDatasets($cursorId: String, $first: Int, $query: String){
+const fullDataRequestString = `query AllDatasets($cursorId: String, $first: Int, $query: String){
   datasets(query: $query,first: $first, after: $cursorId) {
     totalCount
     nodes {
@@ -20,6 +19,7 @@ var FullDataRequest = DataciteRequest{
       references(resourceTypeId: "text") {
         nodes {
           doi
+          publicationYear
           container {
             title
           }
@@ -28,10 +28,26 @@ var FullDataRequest = DataciteRequest{
     }
     pageInfo {
     endCursor
-    startCursor
     hasNextPage
     }
   }
-}`,
-	Variables: map[string]interface{}{"cursorId": "", "first": firstDefault, "query": ""},
-}
+}`
+
+const doiDataRequestString = `query AllDatasets($cursorId: String, $first: Int, $query: String){
+  datasets(query: $query,first: $first, after: $cursorId) {
+    totalCount
+    nodes {
+      doi
+    }
+    pageInfo {
+    endCursor
+    hasNextPage
+    }
+  }
+}`
+
+var fullDataRequestVars = map[string]interface{}{"cursorId": "", "first": firstDefault, "query": ""}
+
+var NamedRequests = map[string]Request{
+	"FullData": {Query: fullDataRequestString, Variables: fullDataRequestVars},
+	"DoiData":  {Query: doiDataRequestString, Variables: fullDataRequestVars}}

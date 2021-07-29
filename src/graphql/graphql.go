@@ -3,14 +3,14 @@ package graphql
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
 const url = "https://api.datacite.org/graphql"
 
-func GetDataciteGraphQLResult(reqData interface{}, result interface{}) error {
-	reqValue, err := json.Marshal(reqData)
+func GetDataCiteGraphQLResult(reqData interface{}, result interface{}) error {
+	reqValue, err := json.Marshal(&reqData)
 	if err != nil {
 		println(err.Error())
 		panic(err)
@@ -20,8 +20,9 @@ func GetDataciteGraphQLResult(reqData interface{}, result interface{}) error {
 		println(err.Error())
 		return err
 	}
+	//noinspection GoUnhandledErrorResult
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		println(err.Error())
 		return err
