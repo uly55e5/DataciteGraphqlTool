@@ -1,5 +1,7 @@
 package datacite
 
+const firstDefault = 100
+
 type DataciteRequest struct {
 	Query     string                 `json:"query"`
 	Variables map[string]interface{} `json:"variables"`
@@ -11,6 +13,7 @@ var FullDataRequest = DataciteRequest{
     totalCount
     nodes {
       doi
+      publicationYear
       repository {
         name
       }
@@ -30,5 +33,5 @@ var FullDataRequest = DataciteRequest{
     }
   }
 }`,
-	Variables: map[string]interface{}{"cursorId": "", "first": 20, "query": "chemistry"},
+	Variables: map[string]interface{}{"cursorId": "", "first": firstDefault, "query": ""},
 }

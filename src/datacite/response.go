@@ -5,8 +5,9 @@ type ResponseData struct {
 		Datasets struct {
 			TotalCount int `json:"totalCount"`
 			Nodes      []struct {
-				Doi        string `json:"doi"`
-				Repository struct {
+				Doi             string `json:"doi"`
+				PublicationYear int    `json:"publicationYear"`
+				Repository      struct {
 					Name string `json:"name"`
 				} `json:"repository"`
 				References struct {
