@@ -11,7 +11,9 @@ import (
 
 const filename = "result.json"
 const query = "NOT chemistry"
-const firstCount = 200
+
+var firstCount = 200
+
 const dataFormat = "DoiData"
 const logName = "datacitetool.log"
 
@@ -45,11 +47,19 @@ func main() {
 		reqStartTime := time.Now()
 		response := datacite.NamedResponse[dataFormat]
 		reqData.Variables["cursorId"] = currentCursor
+		reqData.Variables["first"] = firstCount
 		if err := graphql.GetDataCiteGraphQLResult(&reqData, &response); err != nil {
 			logError("Could not get GraphQL response", err)
+			firstCount = int(float32(firstCount) / 1.2)
 			continue
 		}
 		reqTime := time.Since(reqStartTime)
+		if reqTime < time.Second*50 {
+			firstCount = int(float32(firstCount) * 1.2)
+		} else if reqTime > time.Second*80 {
+			firstCount = int(float32(firstCount) / 1.2)
+		}
+
 		if !response.PageInfo().HasNextPage || response.PageInfo().EndCursor == "" {
 			break
 		}
@@ -64,7 +74,7 @@ func main() {
 		go writeResultFile(filename, &result)
 		avgTime := time.Since(firstStart).Milliseconds() / int64(resultNodeLen-resultNodeStartLen)
 		eta := avgTime * int64(response.NodeCount()-resultNodeLen)
-		logStr := fmt.Sprintln("[", time.Now().Format("2006-01-02 15:04:05.000 MST"), "]", currentCursor, resultNodeLen, response.NodeCount(), reqTime, time.Since(reqStartTime)-reqTime, time.Duration(avgTime)*time.Millisecond, time.Duration(eta)*time.Millisecond)
+		logStr := fmt.Sprintln("[", time.Now().Format("2006-01-02 15:04:05.000 MST"), "]", currentCursor, resultNodeLen, response.NodeCount(), firstCount, reqTime, time.Since(reqStartTime)-reqTime, time.Duration(avgTime)*time.Millisecond, time.Duration(eta)*time.Millisecond)
 		//noinspection GoUnhandledErrorResult
 		go logFile.Write([]byte(logStr))
 		print(logStr)
