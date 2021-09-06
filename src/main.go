@@ -11,7 +11,7 @@ import (
 
 const filename = "result.json"
 const query = "NOT chemistry"
-const firstCount = 4000
+const firstCount = 200
 const dataFormat = "DoiData"
 const logName = "datacitetool.log"
 
@@ -103,5 +103,7 @@ func logError(msg string, err error) {
 	logStr := fmt.Sprintln("[", time.Now().Format("2006-01-02 15:04:05.000 MST"), "]", "ERROR", msg, ":", err.Error())
 	println(logStr)
 	_, err = logFile.Write([]byte(logStr))
-	println("Error while writing log file", err.Error())
+	if err != nil {
+		println("Error while writing log file", err.Error())
+	}
 }

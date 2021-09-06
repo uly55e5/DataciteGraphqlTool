@@ -3,6 +3,7 @@ package graphql
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 )
@@ -19,6 +20,10 @@ func GetDataCiteGraphQLResult(reqData interface{}, result interface{}) error {
 	if err != nil {
 		println(err.Error())
 		return err
+	}
+	if(resp.StatusCode >= 400) {
+		println("The server returned an error: Status code", resp.StatusCode)
+		return errors.New("server error")
 	}
 	//noinspection GoUnhandledErrorResult
 	defer resp.Body.Close()
